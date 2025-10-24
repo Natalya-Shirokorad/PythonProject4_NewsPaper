@@ -32,13 +32,12 @@ class Author(models.Model):
         post_ratings = 0
         for post in self.post_set.all():  # Используем post_set для получения всех постов автора
             post_ratings += post.rating * 3
-#         post_rating = sum(post.rating * 3 for post in self.post_set.all())
-
+#
 # 2. Суммарный рейтинг всех комментариев автора
         comment_rating_by_author = 0
         for comment in Comment.objects.filter(user=self.user):
             comment_rating_by_author += comment.comment_rating
-# comment_rating_by_author = sum(comment.rating for comment in Comment.objects.filter(user=self.user))
+
 # 3. Суммарный рейтинг всех комментариев к статьям автора
         comments_to_posts_ratings = 0
         for post in self.post_set.all():
@@ -46,7 +45,6 @@ class Author(models.Model):
                 comments_to_posts_ratings += comment.comment_rating
 
 # Обновляем общий рейтинг автора
-#         self.ratin = post_ratings + comment_rating_by_author
         self.rating = post_ratings + comment_rating_by_author + comments_to_posts_ratings
         self.save()
 
@@ -63,7 +61,6 @@ class Post(models.Model): # Модель Пост. Эта модель долж�
     title = models.CharField(max_length = 100, verbose_name="Заголовок")    # 	заголовок статьи/новости;
     text = models.TextField(verbose_name="Текст")           #	текст статьи/новости
     rating = models.IntegerField(default= 0, verbose_name="Рейтинг записи")  #	рейтинг статьи/новости.
-    # category = models.ForeignKey(Category)
     categorys = models.ManyToManyField(Category, through='PostCategory', verbose_name="Категории")
     #связь «многие ко многим» с моделью Category (с дополнительной моделью PostCategory)
 
