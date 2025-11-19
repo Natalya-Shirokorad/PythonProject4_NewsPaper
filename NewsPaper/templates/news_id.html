@@ -1,0 +1,14 @@
+
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+News_id
+{% endblock title %}
+
+{% block content %}
+    <h3>{{ time_now|date:'M d Y' }}</h3>
+        <hr>
+            <h1>{{ news_id.title }}</h1>
+            <h2>{{ news_id.text }}</h2>
+            <h3>{{ news_id.time_in|date:'d M Y' }}</h3>
+{% endblock content %}

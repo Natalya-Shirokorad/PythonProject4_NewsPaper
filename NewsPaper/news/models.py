@@ -26,7 +26,9 @@ class Author(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     rating = models.FloatField(default=0.0, verbose_name="Рейтинг автора")
-
+    class Meta:
+        verbose_name = "Автор"
+        verbose_name_plural = "Список авторов"
     def update_rating(self):
 # 1. Суммарный рейтинг каждой статьи автора умножается на 3
         post_ratings = 0
@@ -62,10 +64,13 @@ class Post(models.Model): # Модель Пост. Эта модель долж�
     text = models.TextField(verbose_name="Текст")           #	текст статьи/новости
     rating = models.IntegerField(default= 0, verbose_name="Рейтинг записи")  #	рейтинг статьи/новости.
     categorys = models.ManyToManyField(Category, through='PostCategory', verbose_name="Категории")
+    # category = models.ForeignKey(Category)
     #связь «многие ко многим» с моделью Category (с дополнительной моделью PostCategory)
 
     def __str__(self):
-        return f'{self.title}... ({self.get_article_or_news_display()})'
+        return (f'{self.title}'
+                f'{self.text}'
+                f'({self.get_article_or_news_display()})')
 
     def like_post(self):
 # Увеличивает рейтинг записи на 1
@@ -83,6 +88,9 @@ class Post(models.Model): # Модель Пост. Эта модель долж�
         if len(self.text) > 124:
             return self.text[:124] + '...'
         return self.text
+    class Meta:
+        verbose_name = "Статья"
+        verbose_name_plural = "Новости и Статьи"
 
 # --- Модель PostCategory ---
 class PostCategory(models.Model):
@@ -100,6 +108,10 @@ class Comment(models.Model):
     text_comment = models.TextField()  # Текст комментария
     time_in_category = models.DateTimeField(auto_now_add=True)
     comment_rating = models.IntegerField(default= 0)  # рейтинг комментария
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
 
     def like(self):
         self.comment_rating += 1
