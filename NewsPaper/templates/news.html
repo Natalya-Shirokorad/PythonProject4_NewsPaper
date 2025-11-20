@@ -32,7 +32,7 @@ News
                         в следующем столбце описание, и т.д.  -->
                         <td>{{ news.title }}</td>
                         <td>{{ news.time_in }}</td>
-                        <td>{{ news.text|find_a_bad_word }}</td>
+                        <td>{{ news.text|truncatechars:20|find_a_bad_word}}</td>
                    </tr>
                    {% endfor %}
 
