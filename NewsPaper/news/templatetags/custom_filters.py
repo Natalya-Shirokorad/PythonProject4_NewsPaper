@@ -57,6 +57,14 @@ def find_a_bad_word(text):
             all_word.append(word)
     return " ".join(all_word)
 
-
+"😢 🥴 😃 "
+@register.filter()
+def emoji(value):
+    if value ==0:
+        return '🥴'
+    elif value > 0:
+        return '😃'
+    else:
+        return '😢'
 
 

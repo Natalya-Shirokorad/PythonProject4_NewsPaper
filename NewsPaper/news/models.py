@@ -4,7 +4,7 @@ from datetime import datetime
 from django.utils import timezone
 from .resources import AUTHOR_CHOICES, ARTICLE
 from django.contrib.auth.models import User
-
+from django.urls import reverse
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -58,7 +58,7 @@ class Author(models.Model):
 class Post(models.Model): # Модель Пост. Эта модель должна содержать в себе статьи и новости, которые создают пользователи.
     # Каждый объект может иметь одну или несколько категорий.
     author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Автор") #	связь «один ко многим» с моделью Author
-    article_or_news = models.CharField(choices=AUTHOR_CHOICES, default=ARTICLE, unique= True, verbose_name="Тип записи") # статья или новость. По умолчанию новость
+    article_or_news = models.CharField(choices=AUTHOR_CHOICES, default=ARTICLE, verbose_name="Тип записи") # статья или новость. По умолчанию новость
     time_in = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")   # автоматически добавляемая дата и время создания
     title = models.CharField(max_length = 100, verbose_name="Заголовок")    # 	заголовок статьи/новости;
     text = models.TextField(verbose_name="Текст")           #	текст статьи/новости
@@ -66,6 +66,7 @@ class Post(models.Model): # Модель Пост. Эта модель долж�
     categorys = models.ManyToManyField(Category, through='PostCategory', verbose_name="Категории")
     # category = models.ForeignKey(Category)
     #связь «многие ко многим» с моделью Category (с дополнительной моделью PostCategory)
+
 
     def __str__(self):
         return (f'{self.title}'
@@ -91,6 +92,9 @@ class Post(models.Model): # Модель Пост. Эта модель долж�
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Новости и Статьи"
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 # --- Модель PostCategory ---
 class PostCategory(models.Model):
