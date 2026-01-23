@@ -1,16 +1,14 @@
 
-# Импортируем класс, который говорит нам о том,
-# что в этом представлении мы будем выводить список объектов из БД
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Author
 from datetime import datetime
 from .filters import PostFilter
-from django.utils import timezone
 from django.urls import reverse_lazy
 from .forms import PostForm
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
+from django.shortcuts import render
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+
 
 class PostList(ListView):
     model = Post
@@ -42,14 +40,11 @@ class PostList(ListView):
     # который будет передан в шаблон.
     def get_context_data(self, **kwargs):
     # С помощью super() мы обращаемся к родительским классам
-    # и вызываем у них метод get_context_data с теми же аргументами,
-    # что и были переданы нам.
+    # и вызываем у них метод get_context_data с теми же аргументами, что и были переданы нам.
     # В ответе мы должны получить словарь.
         context = super().get_context_data(**kwargs)
     # К словарю добавим текущую дату в ключ 'time_now'.
         context['time_now'] = datetime.utcnow()
-    # Добавим ещё одну пустую переменную,
-    # чтобы на её примере рассмотреть работу ещё одного фильтра.
         context['next_posts'] = "Самые свежие новости в мире спорта смотрите на нашем сайте"
     # Добавляем в контекст объект фильтрации.
         context['filterset'] = self.filterset
@@ -65,60 +60,73 @@ class PostDetail(DetailView):
     context_object_name = 'news_id'
 
 
-class NewsCreate(CreateView):
+class NewsCreate(PermissionRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     # success_url = reverse_lazy('post_list') # Либо функцию в модель Пост def get_absolute_url(self) для возвращения на страницу новостей
     template_name = 'news/create.html'
+    permission_required = 'news.add_post' # наделение прав создавать посты
 
     def form_valid(self, form):
-        # 1. Создаем объект из данных формы, но в БД еще не отправляем
-        # (поля формы заполнены, но author и article_or_news еще пустые)
         post = form.save(commit=False)
-
-        # 2. Теперь мы можем вручную «допилить» объект
-        post.article_or_news = 'NE'  # Назначаем тип
-        post.author = Author.objects.get(user=self.request.user)  # Назначаем автора
-
-        # 3. И вот теперь, когда все обязательные поля заполнены,
-        # сохраняем объект в базу данных окончательно
+        if 'news' in self.request.path:
+            post.article_or_news = 'NE'
+        post.author = self.request.user.author  # Создаем автора
         post.save()
-
         return super().form_valid(form)
 
-class ArticlesCreate(CreateView):
+
+class ArticlesCreate(PermissionRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     # success_url = reverse_lazy('post_list') # Либо функцию в модель Пост def get_absolute_url(self) для возвращения на страницу новостей
     template_name = 'articles/create.html'
+    permission_required = 'news.add_post'
 
-    def form_valid(self, form):
-        post = form.save(commit=False)
-        post.article_or_news = 'AR'
-        post.author = Author.objects.get(user=self.request.user)  # Назначаем автора
-        post.save()
-        return super().form_valid(form)
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'news/create.html'
+    permission_required = 'news.change_post'
 
-class ArticlesUpdate(UpdateView):
+    def test_func(self):
+        return self.get_object().author == self.request.user.author
+
+
+
+class ArticlesUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PostForm
     model = Post
     template_name = 'articles/create.html'
+    permission_required = 'news.change_post'
+
+    def test_func(self):
+        return self.get_object().author == self.request.user.author
+
 
 class NewsDelete(DeleteView):
     model = Post
     template_name = 'news_delete.html'
     success_url = reverse_lazy('post_list')
 
+    def test_func(self):
+        return self.get_object().author == self.request.user.author
+
 class ArticlesDelete(DeleteView):
     model = Post
     template_name = 'articles_delete.html'
     success_url = reverse_lazy('post_list')
 
+    def test_func(self):
+        return self.get_object().author == self.request.user.author
+
 class SearchPostList(PostList):
     template_name = 'search.html'
-    paginate_by = 5  # вот так мы можем указать количество записей на странице
+    paginate_by = 5
+
+# функция для кнопки удаления новости с определенной публикации
+def delete_news(request ):
+    return render(request, 'news/news_delete.html')
+
+

@@ -35,7 +35,7 @@ News
            post — переменная цикла, т.е. наша новость/статья полученная из списка -->
                 <td>{{ post.title}}</td>
                 <td>{{ post.time_in|date:'d M Y' }}</td>
-                <td>{{ post.text|truncatechars:1000|find_a_bad_word}}</td>
+                <td>{{ post.text|truncatechars:2000|find_a_bad_word}}</td>
                 <td>{{ post.author.user.username}}</td>
                 <td>{{ post.get_article_or_news_display}}</td>
                 <td>{{ post.rating}}</td>

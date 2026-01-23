@@ -8,11 +8,26 @@ News_id
 {% block content %}
 <div style="background-color: lightgray; padding: 150px;"> <!-- Оборачиваем контент -->
     <h3>{{ time_now|date:'M d Y' }}</h3>
-            <p>
-            <h1>{{ news_id.title }}</h1>
-            <hr>
-            <h2>{{ news_id.text }}</h2>
-            <p>
-            <h3>{{ news_id.time_in|date:'d M Y' }}</h3>
+        <p>
+        <h1>{{ news_id.title }}</h1>
+        <hr>
+        <h2>{{ news_id.text }}</h2>
+        <p>
+        <h3>{{ news_id.time_in|date:'d M Y' }}</h3>
+</div>
+<div>
+        {% if news_id.author == user.author %}
+        <button> <a href="{% url 'news_delete' news_id.id %}"> Удалить </a> </button>
+        {% endif %}
+</div>
+<div>
+        {% if news_id.author == user.author %}
+            {% if news_id.article_or_news == 'NE' %}
+                <button> <a href="{% url 'news_update' news_id.id %}"> Редактировать новость </a> </button>
+            {% endif %}
+            {% if news_id.article_or_news == 'AR' %}
+                <button> <a href="{% url 'articles_update' news_id.id %}"> Редактировать статью </a> </button>
+            {% endif %}
+        {% endif %}
 </div>
 {% endblock content %}

@@ -62,22 +62,25 @@ News
         <h2> Новостей нет! </h2>
         {% endif %}
 
+<!--    {# Ссылка на первую страницу и кнопку "Назад" #}-->
     {% if page_obj.has_previous %}
         <a href="?{% url_replace page=1 %}">1</a>
-        {% if page_obj.previous_page_number != 1 %}
-            ...
-            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
-        {% endif %}
+        <a href="?{% url_replace page=page_obj.previous_page_number %}">«</a>
     {% endif %}
 
-    {{ page_obj.number }}
-
-
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-        {% if paginator.num_pages != page_obj.next_page_number %}
-            ...
-            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+<!--    {# Цикл по номерам страниц — ЗДЕСЬ ОБЫЧНО ОШИБКА #}-->
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span>{{ num }}</span> {# Текущая страница (не ссылка) #}
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+<!--            {# Ссылка на конкретное число — ТУТ ОБЯЗАТЕЛЬНО url_replace #}-->
+            <a href="?{% url_replace page=num %}">{{ num }}</a>
         {% endif %}
+    {% endfor %}
+
+<!--    {# Кнопка "Вперед" и "Последняя" #}-->
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">»</a>
+        <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
     {% endif %}
 {% endblock content %}
