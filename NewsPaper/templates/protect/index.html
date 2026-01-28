@@ -11,11 +11,12 @@
         {% if is_not_premium %}
         <button> <a href="/sign/upgrade/"> Хочу Premium!</a> </button>
         {% endif %}
-
         {% if not is_author %}
          <a href="{% url 'be_author' %}" class="btn btn-outline-success btn-sm"> Стать Автором </a>
         {% endif %}
-         </div>
+        {% if not is_subscribers %}
+         <a href="{% url 'be_subscribers' %}" class="btn btn-outline-success btn-sm"> Получать уведомления категория спорт </a>
+        {% endif %}
     </div>
 </div>
 <div class="container mt-3 d-flex justify-content-center">
@@ -32,6 +33,15 @@
     <div style="...">
         {% for message in messages %}
         {% if 'authors' in message.tags %}
+        <div class="=alert alert-success mb-2">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div style="...">
+        {% for message in messages %}
+        {% if 'subscribers' in message.tags %}
         <div class="=alert alert-success mb-2">
             {{ message }}
         </div>

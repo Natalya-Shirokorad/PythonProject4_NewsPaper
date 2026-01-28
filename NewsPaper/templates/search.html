@@ -34,7 +34,9 @@ News
                 <td>Текст</td>
                 <td>Автор</td>
                 <td>Тип публикации</td>
+
                 <td colspan="2">Рейтинг</td>
+                <td>Категория</td>
 <!--                #Объеденяем два столбика рейтинг эмодзи и показатель# -->
             </tr>
                 {% for post in news %}
@@ -52,8 +54,10 @@ News
                 <td>{{ post.text|truncatechars:1000|find_a_bad_word}}</td>
                 <td>{{ post.author.user.username}}</td>
                 <td>{{ post.get_article_or_news_display}}</td>
+
                 <td>{{ post.rating}}</td>
                 <td>{{ post.rating|emoji}}</td>
+                <td>{{ post.category.category_name }}</td>
             </tr>
                 {% endfor %}
         </table>

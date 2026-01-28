@@ -9,6 +9,10 @@ from .forms import PostForm
 from django.shortcuts import render
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
+from django.contrib import messages
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.models import Group
 
 class PostList(ListView):
     model = Post
@@ -75,6 +79,29 @@ class NewsCreate(PermissionRequiredMixin, CreateView):
         post.save()
         return super().form_valid(form)
 
+    # def subs(self, form):
+    #     response =super().subs(form)
+    #     group_subscribers = Group.objects.get(name='subscribers')
+    #     subscribers_users = group_subscribers.user_set.values_list('email', flat=True)
+    #     if self.post.categorys(category_name='sport'):
+    #
+    #         # получаем наш html
+    #         html_content = render_to_string(
+    #             'notification_of_new_posts.html',
+    #             {
+    #                 response: response,
+    #             }
+    #         )
+    #         msg = EmailMultiAlternatives(
+    #             subject=f'{response.user_name}, новая публикация в категории <спорт>',
+    #             body=response.message,  # это то же, что и message
+    #             from_email='n.shirokoradit@yandex.ru',
+    #             to=subscribers_users,  # это то же, что и recipients_list
+    #         )
+    #         msg.attach_alternative(html_content, "text/html")  # добавляем html
+    #         msg.send()  # отсылаем
+    #
+    #     return response
 
 class ArticlesCreate(PermissionRequiredMixin, CreateView):
     model = Post

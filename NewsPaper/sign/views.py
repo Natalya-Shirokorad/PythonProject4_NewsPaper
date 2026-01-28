@@ -48,7 +48,8 @@ def upgrade_me(request):
 @login_required
 def my_profile(request):
     # user = request.user   #функция для перенаправления на страничку зарег. пользователя.
-    context= {'is_author':request.user.groups.filter(name='authors').exists()}
+    context= {'is_author':request.user.groups.filter(name='authors').exists(),
+              'is_subscribers':request.user.groups.filter(name='subscribers').exists()}
                # 'if_the_author_changes':request.user.groups.filter(name='authors').exists(),}# context для проверки находится ли пользователь в группе автор.
     return render(request, 'protect/index.html', context)
 
@@ -68,7 +69,33 @@ def be_author(request):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
-# # Функция наделения прав вносить изменения в статью
+
+# @login_required
+# def be_subscribers(request):
+#     current_user = request.user
+#     # Author.objects.get(user=request.user)
+#     group_subscribers = get_group('subscribers')
+#
+#     if not current_user.groups.filter(name='subscribers').exists():
+#         current_user.groups.add(group_subscribers)
+#         list(messages.get_messages(request))
+#         messages.success(
+#             request, "Вы подписаны на рассылку обновления публикаций в группе категории 'спорт'",
+#             extra_tags = 'subscribers'
+#         )
+#     return redirect(request.META.get('HTTP_REFERER'))
+
+
+# def subscrib(self, request):
+#     if self.user.groups.filter(name='subscribers').exists():
+#         sport=self.post.category.category_name(name='sport')
+#         if
+#         list(messages.get_messages(request))
+#             messages.success(
+#                 request, "В категорию спорт добавлена новая статья",
+#                 extra_tags='subscrib')
+
+            # # Функция наделения прав вносить изменения в статью
 # @login_required
 # def be_change(request):
 #     Author.objects.get_(user=request.user)

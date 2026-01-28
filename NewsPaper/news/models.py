@@ -12,6 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 class Category(models.Model):  # Категории новостей/статей — темы, которые они отражают (спорт, политика, образование и т. д.).
     # Имеет единственное поле: название категории. Поле должно быть уникальным (в определении поля необходимо написать параметр unique = True).
     category_name = (models.CharField(max_length=50, unique=True, verbose_name="Название категории"))
+    subscribers = models.ManyToManyField(User, blank=True, related_name="subscribed_categories" , verbose_name="Название категории")
+
 
     def __str__(self):
         return self.category_name
@@ -19,6 +21,8 @@ class Category(models.Model):  # Категории новостей/стате�
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
+
 
 
  # --- Модель Author ---

@@ -5,6 +5,7 @@ from .views import confirm_logout, my_profile, be_author
 from .views import upgrade_me
 from .views import SignUpView
 from .views import add_author_to_group
+# from .views import be_subscribers
 
 
 urlpatterns = [
@@ -25,5 +26,6 @@ urlpatterns = [
     path('upgrade/', upgrade_me, name ='upgrade'), # Путь к добавить в группу Премиум
     path('authors/', add_author_to_group, name ='authors'), # Путь к добавить в группу Автор
     path('be_author/', be_author, name ='be_author'), # Путь добавить группу и стать автором
-
+    # path('be_subscribers/', be_subscribers, name ='be_subscribers'), # Путь добавить группу subscribers и подписаться
+    # на рассылку уведомлений категории спорт
 ]
